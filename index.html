@@ -7,51 +7,29 @@
         .container {
             display: flex;
             flex-direction: column;
-            gap: 82px; /* အကွာအဝေးကို ပိုချဲ့ပေးထားပါတယ် */
-            padding-top: 65px;
+            gap: 40px; /* စာတန်းတွေ ကပ်သွားအောင် 75 ကနေ 40 ကို လျှော့ထားပါတယ် */
+            padding-top: 55px; /* အပေါ်ဆုံးစာတန်းရဲ့ အမြင့် */
             align-items: center;
         }
         .item { display: flex; flex-direction: column; align-items: center; width: 400px; }
         .title { font-size: 20px; color: #333; font-weight: bold; margin-bottom: 2px; }
-        .val { font-size: 85px; font-weight: bold; line-height: 1; }
+        .val { font-size: 85px; font-weight: bold; line-height: 0.9; }
     </style>
     <script>
         const sheetID = '1WTAqnW15uaT_Cr-9pcr8zTlBxCM6WXm3yV2dK4Iymlg';
-        // Google Sheet ကို ဂဏန်းသက်သက်ပဲ အမြန်ဆုံးဆွဲယူမည့် Link
-        const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:csv`;
+        const csvURL = `https://docs.google.com/spreadsheets/d/${sheetID}/export?format=csv`;
 
         async function update() {
             try {
-                const r = await fetch(csvURL + '&cache=' + Date.now());
+                const r = await fetch(csvURL + '&t=' + Date.now());
                 const t = await r.text();
-                // စာကြောင်းများကို ခွဲထုတ်ပြီး တစ်ကွက်ချင်းစီ နေရာချသည်
-                const rows = t.split('\n').map(v => v.replace(/"/g, '').trim());
+                const rows = t.split('\n').map(row => row.split(',')[0].replace(/"/g, '').trim()).filter(v => v !== "");
                 
-                if (rows.length > 0) {
-                    document.getElementById('v1').innerText = rows[0] || '---';
-                    document.getElementById('v2').innerText = rows[1] || '--';
-                    document.getElementById('v3').innerText = rows[2] || '--';
-                }
-            } catch (e) { console.log(e); }
-        }
-        setInterval(update, 3000); // ၃ စက္ကန့်တစ်ခါ အလိုအလျောက် Update လုပ်မည်
-        update();
-    </script>
-</head>
-<body>
-    <div class="container">
-        <div class="item">
-            <div class="title" style="color: #ffffff; text-shadow: 1px 1px 2px #000;">ဟော့ထိပ်စီး</div>
-            <div id="v1" class="val" style="color: #ffffff; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">---</div>
-        </div>
-        <div class="item">
-            <div class="title">11:00AM</div>
-            <div id="v2" class="val" style="color: #ffff00; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">--</div>
-        </div>
-        <div class="item">
-            <div class="title">3:00PM</div>
-            <div id="v3" class="val" style="color: #00ffff; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">--</div>
-        </div>
-    </div>
-</body>
-</html>
+                // စာသားလား ဂဏန်းလား ခွဲခြားပြီး ပေါ်အောင်လုပ်ပေးတာပါ
+                const startIdx = isNaN(rows[0]) ? 1 : 0;
+
+                document.getElementById('v1').innerText = rows[startIdx] || '---';
+                document.getElementById('v2').innerText = rows[startIdx + 1] || '--';
+                document.getElementById('v3').innerText = rows[startIdx + 2] || '--';
+            } catch (e) {
+        
