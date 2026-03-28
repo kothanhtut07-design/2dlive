@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { background: transparent; margin: 0; padding: 10px; overflow: hidden; font-family: sans-serif; }
+        .live-container {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #00ff00;
+            border-radius: 15px;
+            padding: 10px 20px;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .section { text-align: center; padding: 0 15px; }
+        .divider { width: 2px; height: 40px; background: #444; }
+        .title { font-size: 14px; color: #00ff00; font-weight: bold; margin-bottom: 2px; }
+        .val-3 { font-size: 50px; color: #ffffff; font-weight: bold; line-height: 1; }
+        .val-2 { font-size: 50px; color: #ffff00; font-weight: bold; line-height: 1; }
+    </style>
+    <script>
+        const csvURL = 'https://docs.google.com/spreadsheets/d/1WTAqnW15uaT_Cr-9pcr8zTlBxCM6WXm3yV2dK4Iymlg/gviz/tq?tqx=out:csv';
+        async function update() {
+            try {
+                const r = await fetch(csvURL + '&c=' + Date.now());
+                const t = await r.text();
+                const rows = t.split('\n').map(v => v.replace(/"/g, '').trim());
+                document.getElementById('a1').innerText = rows[0] || '---';
+                document.getElementById('a2').innerText = rows[1] || '--';
+                document.getElementById('a3').innerText = rows[2] || '--';
+            } catch (e) { }
+        }
+        setInterval(update, 3000);
+        update();
+    </script>
+</head>
+<body>
+    <div class="live-container">
+        <div class="section"><div class="title">SET</div><div id="a1" class="val-3">---</div></div>
+        <div class="divider"></div>
+        <div class="section"><div class="title">LIVE</div><div id="a2" class="val-2">--</div></div>
+        <div class="divider"></div>
+        <div class="section"><div class="title">2D</div><div id="a3" class="val-2">--</div></div>
+    </div>
+</body>
+</html>
